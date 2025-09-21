@@ -62,3 +62,6 @@ RUN strip --strip-all /usr/local/bin/ffmpeg /usr/local/bin/ffprobe
 FROM scratch AS final
 COPY --from=ffmpeg-builder /usr/local/bin/ffmpeg /ffmpeg
 COPY --from=ffmpeg-builder /usr/local/bin/ffprobe /ffprobe
+
+# Set ffmpeg as the default entrypoint
+ENTRYPOINT ["/ffmpeg"]
