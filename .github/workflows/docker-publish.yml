@@ -14,7 +14,7 @@ on:
   workflow_dispatch:
 
 env:
-  IMAGE_NAME: ffmpeg-minimal
+  IMAGE_NAME: efefempeg
 
 jobs:
   build-and-push:
@@ -53,6 +53,7 @@ jobs:
             type=sha,prefix={{branch}}-
 
       - name: Build and push Docker image
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -68,8 +69,8 @@ jobs:
       - name: Test FFmpeg and FFprobe
         run: |
           echo "Testing FFmpeg and FFprobe binaries..."
-          # Create container (will use ffmpeg as entrypoint)
-          docker create --name test-container ${{ steps.meta.outputs.tags }} -version
+          # Create container using the built image ID
+          docker create --name test-container ${{ steps.build.outputs.imageid }} -version
           docker cp test-container:/ffmpeg ./ffmpeg
           docker cp test-container:/ffprobe ./ffprobe
           docker rm test-container
