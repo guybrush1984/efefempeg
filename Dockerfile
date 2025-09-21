@@ -27,10 +27,12 @@ RUN wget -q https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz && \
         --disable-swscale \
         --disable-everything \
         --enable-decoder=pcm_* \
+        --enable-decoder=aac \
         --enable-encoder=pcm_s16le \
         --enable-encoder=aac \
         --enable-demuxer=wav \
         --enable-demuxer=ffmetadata \
+        --enable-demuxer=mov \
         --enable-muxer=segment \
         --enable-muxer=mp4 \
         --enable-muxer=ipod \
