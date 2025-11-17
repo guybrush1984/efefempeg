@@ -45,6 +45,9 @@ RUN wget -q https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz && \
         --enable-filter=concat \
         --enable-filter=apad \
         --enable-filter=loudnorm \
+        --enable-filter=dynaudnorm \
+        --enable-filter=volume \
+        --enable-filter=alimiter \
         --enable-indev=lavfi \
         --enable-demuxer=concat \
         --enable-filter=anullsrc \
