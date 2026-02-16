@@ -8,16 +8,43 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     nasm \
     pkg-config \
     ca-certificates \
+    autoconf \
+    automake \
+    libtool \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /build
 
-# Build minimal FFmpeg 8.0 with native AAC encoder (LGPL license)
+# Build libfdk-aac (static)
+RUN wget -q https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz && \
+    tar xf v2.0.3.tar.gz && \
+    cd fdk-aac-2.0.3 && \
+    autoreconf -fiv && \
+    ./configure --prefix=/usr/local --enable-static --disable-shared && \
+    make -j4 && \
+    make install && \
+    cd .. && rm -rf fdk-aac-2.0.3 v2.0.3.tar.gz
+
+# Build libopus (static)
+RUN wget -q https://downloads.xiph.org/releases/opus/opus-1.5.2.tar.gz && \
+    tar xf opus-1.5.2.tar.gz && \
+    cd opus-1.5.2 && \
+    ./configure --prefix=/usr/local --enable-static --disable-shared --disable-doc --disable-extra-programs && \
+    make -j4 && \
+    make install && \
+    cd .. && rm -rf opus-1.5.2 opus-1.5.2.tar.gz
+
+ENV PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
+
+# Build minimal FFmpeg 8.0 with libfdk-aac and libopus (nonfree license)
 RUN wget -q https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz && \
     tar xf ffmpeg-8.0.tar.xz && \
     cd ffmpeg-8.0 && \
     ./configure \
         --prefix=/usr/local \
+        --pkg-config-flags="--static" \
+        --enable-gpl \
+        --enable-nonfree \
         --enable-static \
         --disable-shared \
         --disable-debug \
@@ -29,10 +56,18 @@ RUN wget -q https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz && \
         --enable-decoder=pcm_* \
         --enable-decoder=aac \
         --enable-encoder=pcm_s16le \
+        --enable-libfdk-aac \
+        --enable-libopus \
         --enable-encoder=aac \
+        --enable-encoder=libfdk_aac \
+        --enable-encoder=libopus \
+        --enable-decoder=libfdk_aac \
+        --enable-decoder=libopus \
         --enable-demuxer=wav \
         --enable-demuxer=ffmetadata \
         --enable-demuxer=mov \
+        --enable-demuxer=ogg \
+        --enable-muxer=ogg \
         --enable-muxer=segment \
         --enable-muxer=mp4 \
         --enable-muxer=ipod \
