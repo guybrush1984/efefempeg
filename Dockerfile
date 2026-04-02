@@ -25,6 +25,15 @@ RUN wget -q https://github.com/mstorsjo/fdk-aac/archive/refs/tags/v2.0.3.tar.gz 
     make install && \
     cd .. && rm -rf fdk-aac-2.0.3 v2.0.3.tar.gz
 
+# Build libmp3lame (static)
+RUN wget -q https://sourceforge.net/projects/lame/files/lame/3.100/lame-3.100.tar.gz/download -O lame-3.100.tar.gz && \
+    tar xf lame-3.100.tar.gz && \
+    cd lame-3.100 && \
+    ./configure --prefix=/usr/local --enable-static --disable-shared --disable-frontend --disable-decoder && \
+    make -j4 && \
+    make install && \
+    cd .. && rm -rf lame-3.100 lame-3.100.tar.gz
+
 # Build libopus (static)
 RUN wget -q https://downloads.xiph.org/releases/opus/opus-1.5.2.tar.gz && \
     tar xf opus-1.5.2.tar.gz && \
@@ -57,7 +66,9 @@ RUN wget -q https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz && \
         --enable-decoder=aac \
         --enable-encoder=pcm_s16le \
         --enable-libfdk-aac \
+        --enable-libmp3lame \
         --enable-libopus \
+        --enable-encoder=libmp3lame \
         --enable-encoder=aac \
         --enable-encoder=libfdk_aac \
         --enable-encoder=libopus \
@@ -72,6 +83,8 @@ RUN wget -q https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz && \
         --enable-muxer=mp4 \
         --enable-muxer=ipod \
         --enable-muxer=wav \
+        --enable-muxer=mp3 \
+        --enable-filter=afade \
         --enable-filter=asetrate \
         --enable-filter=aresample \
         --enable-filter=atempo \
