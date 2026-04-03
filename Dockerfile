@@ -64,6 +64,7 @@ RUN wget -q https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz && \
         --disable-everything \
         --enable-decoder=pcm_* \
         --enable-decoder=aac \
+        --enable-decoder=mp3float \
         --enable-encoder=pcm_s16le \
         --enable-libfdk-aac \
         --enable-libmp3lame \
@@ -77,6 +78,7 @@ RUN wget -q https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz && \
         --enable-demuxer=wav \
         --enable-demuxer=ffmetadata \
         --enable-demuxer=mov \
+        --enable-demuxer=mp3 \
         --enable-demuxer=ogg \
         --enable-muxer=ogg \
         --enable-muxer=segment \
