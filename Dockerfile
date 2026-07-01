@@ -103,6 +103,7 @@ RUN wget -q https://ffmpeg.org/releases/ffmpeg-8.0.tar.xz && \
         --enable-filter=anullsrc \
         --enable-protocol=file \
         --enable-protocol=pipe \
+        --enable-protocol=cache \
         --enable-small \
         --enable-lto \
         --extra-cflags="-O3 -ffunction-sections -fdata-sections" \
